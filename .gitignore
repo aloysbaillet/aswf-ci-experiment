@@ -1,0 +1,4 @@
+build/
+*.pyc
+*.tar.bz2
+*.tar.gz

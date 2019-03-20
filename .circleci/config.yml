@@ -1,0 +1,59 @@
+version: 2.1
+
+executors:
+  aswf-vfx2018-conan:
+    docker:
+      - image: aloysbaillet/aswf-vfx2018-conan
+
+jobs:
+  build:
+    executor: aswf-vfx2018-conan
+
+    steps:
+      - checkout
+
+      - run:
+          name: TBB build
+          environment: 
+            CONAN_PRINT_RUN_COMMANDS: 1
+            CONAN_LOGGING_LEVEL: 10 # debug
+          command: conan create conan/TBB aswf/vfx2018
+
+      - run:
+          name: boost build
+          environment: 
+            CONAN_PRINT_RUN_COMMANDS: 1
+            CONAN_LOGGING_LEVEL: 10 # debug
+          command: conan create conan/boost aswf/vfx2018
+
+      - persist_to_workspace:
+          root: /home/circleci/.conan/data
+          paths:
+            - TBB
+            - boost
+  deploy:
+    executor: aswf-vfx2018-conan
+
+    steps:
+      - attach_workspace:
+          at: /home/circleci/.conan/data
+      - run:
+          name: TBB upload
+          command: conan upload TBB/*@aswf/vfx2018 --force --confirm --all -r=aswftest
+      - run:
+          name: boost upload
+          command: conan upload boost/*@aswf/vfx2018 --force --confirm --all -r=aswftest
+
+
+workflows:
+  version: 2
+
+  build_test_deploy:
+    jobs:
+      - build
+      - deploy:
+          requires:
+            - build
+          filters:
+            branches:
+              only: master

@@ -1,0 +1,2 @@
+conan-center https://conan.bintray.com True
+aswftest https://api.bintray.com/conan/aloysbaillet/aswftest True
