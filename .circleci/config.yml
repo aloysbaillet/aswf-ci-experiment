@@ -39,11 +39,11 @@ jobs:
       - attach_workspace:
           at: /home/circleci/.conan/data
       - run:
-          name: TBB upload
-          command: conan upload TBB/*@aswf/vfx2018 --force --confirm --all -r=aswftest
-      - run:
-          name: boost upload
-          command: conan upload boost/*@aswf/vfx2018 --force --confirm --all -r=aswftest
+          name: Packages upload
+          command: |
+            conan user
+            conan upload TBB/*@aswf/vfx2018 --force --confirm --all -r=aswftest
+            conan upload boost/*@aswf/vfx2018 --force --confirm --all -r=aswftest
 
 
 workflows:
