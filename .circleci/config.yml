@@ -24,6 +24,7 @@ jobs:
           environment: 
             CONAN_PRINT_RUN_COMMANDS: 1
             CONAN_LOGGING_LEVEL: 10 # debug
+            CONAN_CPU_COUNT: 4 # the default of 36 on circleci makes the jor run out of memory!
           command: conan create conan/boost aswf/vfx2018
 
       - persist_to_workspace:
