@@ -27,6 +27,10 @@ jobs:
             CONAN_CPU_COUNT: 4 # the default of 36 on circleci makes the jor run out of memory!
           command: conan create conan/boost aswf/vfx2018
 
+      - run:
+          name: numpy build
+          command: conan create conan/numpy aswf/vfx2018
+
       - persist_to_workspace:
           root: /home/circleci/.conan/data
           paths:
@@ -44,7 +48,7 @@ jobs:
             conan user
             conan upload TBB/*@aswf/vfx2018 --force --confirm --all -r=aswftest
             conan upload boost/*@aswf/vfx2018 --force --confirm --all -r=aswftest
-
+            conan upload numpy/*@aswf/vfx2018 --force --confirm --all -r=aswftest
 
 workflows:
   version: 2

@@ -29,7 +29,7 @@ RUN curl "https://bootstrap.pypa.io/get-pip.py" -o "get-pip.py" &&\
     python get-pip.py
 
 RUN pip install \
-    numpy==1.12.1
+    nose
 
 ENV HOME /home/circleci
 RUN groupadd -r circleci && useradd -r -d ${HOME} -m -g circleci circleci
