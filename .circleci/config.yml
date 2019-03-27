@@ -6,7 +6,7 @@ executors:
       - image: aloysbaillet/aswf-vfx2018-conan
 
 jobs:
-  build:
+  build-TBB:
     executor: aswf-vfx2018-conan
 
     steps:
@@ -14,18 +14,35 @@ jobs:
 
       - run:
           name: TBB build
-          environment: 
-            CONAN_PRINT_RUN_COMMANDS: 1
-            CONAN_LOGGING_LEVEL: 10 # debug
           command: conan create conan/TBB aswf/vfx2018
+
+      - persist_to_workspace:
+          root: /home/circleci/.conan/data
+          paths:
+            - TBB
+
+  build-boost:
+    executor: aswf-vfx2018-conan
+
+    steps:
+      - checkout
 
       - run:
           name: boost build
           environment: 
-            CONAN_PRINT_RUN_COMMANDS: 1
-            CONAN_LOGGING_LEVEL: 10 # debug
             CONAN_CPU_COUNT: 4 # the default of 36 on circleci makes the jor run out of memory!
           command: conan create conan/boost aswf/vfx2018
+
+      - persist_to_workspace:
+          root: /home/circleci/.conan/data
+          paths:
+            - boost
+
+  build-numpy:
+    executor: aswf-vfx2018-conan
+
+    steps:
+      - checkout
 
       - run:
           name: numpy build
@@ -34,8 +51,8 @@ jobs:
       - persist_to_workspace:
           root: /home/circleci/.conan/data
           paths:
-            - TBB
-            - boost
+            - numpy
+
   deploy:
     executor: aswf-vfx2018-conan
 
@@ -53,12 +70,16 @@ jobs:
 workflows:
   version: 2
 
-  build_test_deploy:
+  build_and_deploy:
     jobs:
-      - build
+      - build-TBB
+      - build-boost
+      - build-numpy
       - deploy:
           requires:
-            - build
+            - build-TBB
+            - build-boost
+            - build-numpy
           filters:
             branches:
               only: master
