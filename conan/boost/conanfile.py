@@ -41,7 +41,7 @@ class BoostConan(ConanFile):
     license = "Boost Software License - Version 1.0. http://www.boost.org/LICENSE_1_0.txt"
     short_paths = True
     no_copy_source = False
-    exports_sources = '*.tar.bz2', 'patches/*'
+    exports_sources = '*.tar.bz2'
 
     def config_options(self):
         if self.settings.compiler == "Visual Studio":
@@ -72,9 +72,6 @@ class BoostConan(ConanFile):
         if self.options.header_only:
             self.output.warn("Header only package, skipping build")
             return
-
-        # if not self.options.without_python:
-        #     tools.patch(base_path=os.path.join(self.build_folder, self.folder_name), patch_file='patches/python_base_prefix.patch', strip=1)
 
         b2_exe = self.bootstrap()
         flags = self.get_build_flags()
