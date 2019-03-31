@@ -5,6 +5,32 @@ executors:
     docker:
       - image: aloysbaillet/aswf-vfx2018-conan
 
+commands:
+  build-conan-package:
+    description: "Build Conan Package"
+    parameters:
+      package:
+        description: "Conan package name"
+        type: string
+        default: ""
+      conan_cpu_count:
+        description: "Number of CPUs to use during build"
+        type: integer
+        default: 36
+    steps:
+      - checkout
+      - run:
+          name: << parameters.package >> build
+          environment: 
+            CONAN_PRINT_RUN_COMMANDS: 1
+            CONAN_LOGGING_LEVEL: 10 # debug
+            CONAN_CPU_COUNT: << parameters.conan_cpu_count >>
+          command: conan create conan/<< parameters.package >> aswf/vfx2018
+      - persist_to_workspace:
+          root: /home/circleci/.conan/data
+          paths:
+            - << parameters.package >>
+
 jobs:
   build-docker-images:
     machine: true
@@ -23,70 +49,34 @@ jobs:
 
   build-TBB:
     executor: aswf-vfx2018-conan
-
     steps:
-      - checkout
-
-      - run:
-          name: TBB build
-          environment: 
-            CONAN_PRINT_RUN_COMMANDS: 1
-            CONAN_LOGGING_LEVEL: 10 # debug
-          command: conan create conan/TBB aswf/vfx2018
-
-      - persist_to_workspace:
-          root: /home/circleci/.conan/data
-          paths:
-            - TBB
+      - build-conan-package:
+          package: TBB
 
   build-boost:
     executor: aswf-vfx2018-conan
-
     steps:
-      - checkout
-
-      - run:
-          name: boost build
-          environment: 
-            CONAN_PRINT_RUN_COMMANDS: 1
-            CONAN_LOGGING_LEVEL: 10 # debug
-            CONAN_CPU_COUNT: 4 # the default of 36 on circleci makes the jor run out of memory!
-          command: conan create conan/boost aswf/vfx2018
-
-      - persist_to_workspace:
-          root: /home/circleci/.conan/data
-          paths:
-            - boost
+      - build-conan-package:
+          package: boost
+          conan_cpu_count: 8
 
   build-numpy:
     executor: aswf-vfx2018-conan
-
     steps:
-      - checkout
-
-      - run:
-          name: numpy build
-          command: conan create conan/numpy aswf/vfx2018
-
-      - persist_to_workspace:
-          root: /home/circleci/.conan/data
-          paths:
-            - numpy
+      - build-conan-package:
+          package: numpy
 
   build-Qt:
     executor: aswf-vfx2018-conan
-
     steps:
       - checkout
-
       - run:
           name: Qt build
           environment: 
             CONAN_CPU_COUNT: 8 # the default of 36 on circleci makes the jor run out of memory!
             PARALLEL_JOBS: 4 # limit for qt build
-            NINJAFLAGS: -j8
+            NINJAFLAGS: -j8 # limit for chromium build
           command: conan create conan/Qt aswf/vfx2018
-
       - persist_to_workspace:
           root: /home/circleci/.conan/data
           paths:
@@ -94,21 +84,28 @@ jobs:
 
   build-PySide:
     executor: aswf-vfx2018-conan
-
     steps:
-      - checkout
+      - build-conan-package:
+          package: PySide
 
-      - attach_workspace:
-          at: /home/circleci/.conan/data
+  build-IlmBase:
+    executor: aswf-vfx2018-conan
+    steps:
+      - build-conan-package:
+          package: IlmBase
 
-      - run:
-          name: PySide build
-          command: conan create conan/PySide aswf/vfx2018
+  build-OpenEXR:
+    executor: aswf-vfx2018-conan
+    steps:
+      - build-conan-package:
+          package: OpenEXR
 
-      - persist_to_workspace:
-          root: /home/circleci/.conan/data
-          paths:
-            - PySide
+  build-PyIlmBase:
+    executor: aswf-vfx2018-conan
+    steps:
+      - build-conan-package:
+          package: PyIlmBase
+          conan_cpu_count: 4
 
   deploy:
     executor: aswf-vfx2018-conan
@@ -125,6 +122,9 @@ jobs:
             conan upload numpy/*@aswf/vfx2018 --force --confirm --all -r=aswftest
             conan upload Qt/*@aswf/vfx2018 --force --confirm --all -r=aswftest
             conan upload PySide/*@aswf/vfx2018 --force --confirm --all -r=aswftest
+            conan upload IlmBase/*@aswf/vfx2018 --force --confirm --all -r=aswftest
+            conan upload OpenEXR/*@aswf/vfx2018 --force --confirm --all -r=aswftest
+            conan upload PyIlmBase/*@aswf/vfx2018 --force --confirm --all -r=aswftest
 
 workflows:
   version: 2
@@ -144,6 +144,17 @@ workflows:
       - build-numpy:
           requires:
             - build-docker-images
+      - build-IlmBase:
+          requires:
+            - build-docker-images
+      - build-OpenEXR:
+          requires:
+            - build-IlmBase
+      - build-PyIlmBase:
+          requires:
+            - build-boost
+            - build-IlmBase
+            - build-numpy
       - build-Qt:
           requires:
             - build-docker-images
@@ -157,6 +168,9 @@ workflows:
             - build-numpy
             - build-Qt
             - build-PySide
+            - build-IlmBase
+            - build-OpenEXR
+            - build-PyIlmBase
           filters:
             branches:
               only: master
