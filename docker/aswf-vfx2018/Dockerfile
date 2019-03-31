@@ -56,6 +56,7 @@ RUN yum install -y \
     tcsh \
     fam \
     wget \
+    patch \
     && \
     yum clean all
 

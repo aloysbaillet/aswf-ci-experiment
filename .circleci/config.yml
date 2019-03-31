@@ -107,6 +107,12 @@ jobs:
           package: PyIlmBase
           conan_cpu_count: 4
 
+  build-OpenColorIO:
+    executor: aswf-vfx2018-conan
+    steps:
+      - build-conan-package:
+          package: OpenColorIO
+
   deploy:
     executor: aswf-vfx2018-conan
 
@@ -125,6 +131,7 @@ jobs:
             conan upload IlmBase/*@aswf/vfx2018 --force --confirm --all -r=aswftest
             conan upload OpenEXR/*@aswf/vfx2018 --force --confirm --all -r=aswftest
             conan upload PyIlmBase/*@aswf/vfx2018 --force --confirm --all -r=aswftest
+            conan upload OpenColorIO/*@aswf/vfx2018 --force --confirm --all -r=aswftest
 
 workflows:
   version: 2
@@ -161,6 +168,9 @@ workflows:
       - build-PySide:
           requires:
             - build-Qt
+      - build-OpenColorIO:
+          requires:
+            - build-docker-images
       - deploy:
           requires:
             - build-TBB
@@ -171,6 +181,7 @@ workflows:
             - build-IlmBase
             - build-OpenEXR
             - build-PyIlmBase
+            - build-OpenColorIO
           filters:
             branches:
               only: master
