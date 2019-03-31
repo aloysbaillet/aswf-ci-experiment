@@ -6,8 +6,8 @@ class NumpyConan(ConanFile):
     name = "numpy"
     description = "NumPy is the fundamental package needed for scientific computing with Python."
     version = "1.12.1"
-    license = "BSD"
-    url = "https://github.com/numpy/numpy"
+    license = "LGPL"
+    url = "https://wiki.qt.io/Qt_for_Python"
     settings = "os", "compiler", "build_type", "arch"
     exports = "*.tar.gz"
 
@@ -26,7 +26,7 @@ class NumpyConan(ConanFile):
         os.makedirs(pypath)
         with tools.environment_append({'PYTHONPATH': pypath}):
             self.run('python setup.py build -j 4 install --prefix {}'.format(self.package_folder),
-                    cwd='numpy-1.12.1')
+                     cwd='numpy-1.12.1')
 
     def package(self):
         self.copy("*.egg")

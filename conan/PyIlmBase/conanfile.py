@@ -16,6 +16,7 @@ class PyIlmBaseConan(ConanFile):
     def requirements(self):
         self.requires('IlmBase/2.2.0@aswf/vfx2018')
         self.requires('boost/1.61.0@aswf/vfx2018')
+        self.requires('numpy/1.12.1@aswf/vfx2018')
 
     def source(self):
         base = "pyilmbase-{version}.tar.gz".format(version=self.version)
@@ -32,10 +33,10 @@ class PyIlmBaseConan(ConanFile):
                 "--enable-namespaceversioning",
         ]
         autotools = AutoToolsBuildEnvironment(self)
-        # LD_LIBRARY_PATH is needed by the configure script to find libHalf
+        # LD_LIBRARY_PATH is needed by the configure script to find libHalf and numpy
         with tools.environment_append(RunEnvironment(self).vars):
             autotools.configure(configure_dir='pyilmbase-{}'.format(self.version), args=args)
-        autotools.make()
+            autotools.make()
         tools.replace_prefix_in_pc_file("PyIlmBase.pc", "${package_root_path_pyilmbase}")
 
     def package(self):
