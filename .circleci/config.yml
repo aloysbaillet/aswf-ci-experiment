@@ -92,6 +92,24 @@ jobs:
           paths:
             - Qt
 
+  build-PySide:
+    executor: aswf-vfx2018-conan
+
+    steps:
+      - checkout
+
+      - attach_workspace:
+          at: /home/circleci/.conan/data
+
+      - run:
+          name: PySide build
+          command: conan create conan/PySide aswf/vfx2018
+
+      - persist_to_workspace:
+          root: /home/circleci/.conan/data
+          paths:
+            - PySide
+
   deploy:
     executor: aswf-vfx2018-conan
 
@@ -106,6 +124,7 @@ jobs:
             conan upload boost/*@aswf/vfx2018 --force --confirm --all -r=aswftest
             conan upload numpy/*@aswf/vfx2018 --force --confirm --all -r=aswftest
             conan upload Qt/*@aswf/vfx2018 --force --confirm --all -r=aswftest
+            conan upload PySide/*@aswf/vfx2018 --force --confirm --all -r=aswftest
 
 workflows:
   version: 2
@@ -128,12 +147,16 @@ workflows:
       - build-Qt:
           requires:
             - build-docker-images
+      - build-PySide:
+          requires:
+            - build-Qt
       - deploy:
           requires:
             - build-TBB
             - build-boost
             - build-numpy
             - build-Qt
+            - build-PySide
           filters:
             branches:
               only: master
