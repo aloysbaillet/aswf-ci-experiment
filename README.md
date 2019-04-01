@@ -46,4 +46,7 @@ To activate any environment variables required by the package you can run the fo
 source activate.sh
 source activate_run.sh
 ```
-.
+
+### Development
+
+To create and test conan packages, use the docker images and mount the current folder as shown in this [document](conan/README.md).
