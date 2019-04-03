@@ -9,7 +9,7 @@ class OpenEXRConan(ConanFile):
     version = "2.2.0"
     license = "BSD"
     url = "https://github.com/jgsogo/conan-openexr.git"
-    settings = "os", "compiler", "build_type", "arch"
+    settings = "os", "compiler", "build_type", "arch", "cppstd"
     generators = "pkg_config", "virtualenv"
     exports = "*.tar.gz"
 

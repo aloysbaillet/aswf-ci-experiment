@@ -9,8 +9,7 @@ class PySideConan(ConanFile):
     version = "2.2.0"
     license = "BSD"
     url = "https://github.com/jgsogo/conan-openexr.git"
-    settings = "os", "compiler", "build_type", "arch"
-    generators = "qt"
+    settings = "os", "compiler", "build_type", "arch", "cppstd", "python"
     exports = "*.tgz"
 
     def requirements(self):

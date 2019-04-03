@@ -10,7 +10,7 @@ class OpenColorIOConan(ConanFile):
     version = "1.0.9"
     license = "BSD"
     url = "https://github.com/Mikayex/conan-OpenColorIO.git"
-    settings = "os", "compiler", "build_type", "arch", "cppstd"
+    settings = "os", "compiler", "build_type", "arch", "cppstd", "python"
     exports = "*.tar.gz"
 
     def source(self):

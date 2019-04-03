@@ -16,6 +16,8 @@ The Conan recipes in the `conan` folder are a mix of copies of pre-existing cona
 
 ### Usage
 
+#### Getting Started
+
 First install Conan: https://docs.conan.io/en/latest/installation.html and update your `.conan/settings.yaml` with added linux versions as specified [there](https://github.com/aloysbaillet/aswf-ci-experiment/blob/master/docker/aswf-vfx2018-conan/config/settings.yml#L20).
 
 Or you can use the prebuilt docker image that contains a pre-installed and pre-configured conan. See below for Docker image usage instructions.
@@ -25,6 +27,10 @@ Then you need to install the shared conan configuration which contains the VFX20
 conan config install https://github.com/aloysbaillet/aswf-ci-experiment/raw/master/conan_config.zip
 ```
 
+#### Python demo
+See [somepy demo](demo/somepy/README.md)
+
+#### CMake demo
 To build a package that requires any of the existing Conan packages, simply create a `conanfile.txt` such as:
 ```
 [requires]
@@ -38,13 +44,16 @@ virtualenv
 virtualrunenv
 ```
 
-Then run 
-```conan install .```
-to download and install all required packages in the current folder.
+Then run this to download and install all required packages in the current folder.
+```
+mkdir build
+cd build
+conan install .. --profile vfx2018
+```
 
 The `cmake_paths` "generator" will instruct Conan to generate a `conan_paths.cmake` file that can be used as a toolchain file so you can run:
 ```
-cmake . -DCMAKE_TOOLCHAIN_FILE=conan_paths.cmake
+cmake .. -DCMAKE_TOOLCHAIN_FILE=conan_paths.cmake
 ```
 To activate any environment variables required by the package you can run the following lines:
 ```

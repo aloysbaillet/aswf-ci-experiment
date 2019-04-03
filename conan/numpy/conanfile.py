@@ -8,7 +8,7 @@ class NumpyConan(ConanFile):
     version = "1.12.1"
     license = "LGPL"
     url = "https://wiki.qt.io/Qt_for_Python"
-    settings = "os", "compiler", "build_type", "arch"
+    settings = "os", "compiler", "build_type", "arch", "cppstd", "python"
     exports = "*.tar.gz"
 
     def source(self):

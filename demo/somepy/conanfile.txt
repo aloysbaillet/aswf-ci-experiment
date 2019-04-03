@@ -1,0 +1,7 @@
+[requires]
+PyIlmBase/[~=2.2]@aswf/vfx2018
+OpenColorIO/[~=1.0]@aswf/vfx2018
+
+[generators]
+virtualenv
+virtualrunenv
