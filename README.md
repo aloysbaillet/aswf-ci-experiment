@@ -20,6 +20,11 @@ First install Conan: https://docs.conan.io/en/latest/installation.html and updat
 
 Or you can use the prebuilt docker image that contains a pre-installed and pre-configured conan. See below for Docker image usage instructions.
 
+Then you need to install the shared conan configuration which contains the VFX2018 settings and the following temporary remote: https://api.bintray.com/conan/aloysbaillet/aswftest :
+```
+conan config install https://github.com/aloysbaillet/aswf-ci-experiment/raw/master/conan_config.zip
+```
+
 To build a package that requires any of the existing Conan packages, simply create a `conanfile.txt` such as:
 ```
 [requires]
