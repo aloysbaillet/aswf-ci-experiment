@@ -73,12 +73,3 @@ RUN curl "https://bootstrap.pypa.io/get-pip.py" -o "get-pip.py" &&\
 
 RUN pip install \
     nose
-
-ENV HOME /home/circleci
-RUN groupadd -r circleci && useradd -r -d ${HOME} -m -g circleci circleci
-RUN echo "%circleci        ALL=(ALL)       NOPASSWD: ALL" >> /etc/sudoers
-USER circleci
-
-RUN mkdir -p ${HOME}/.ssh && ssh-keyscan -t rsa github.com >> ${HOME}/.ssh/known_hosts
-
-#WORKDIR /home/circleci/project
