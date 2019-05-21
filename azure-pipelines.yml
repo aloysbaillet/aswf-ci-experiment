@@ -1,30 +1,72 @@
-trigger:
-- master
+stages:
+- stage: build_docker_images
+  displayName: Build and Publish docker images  
+  condition: eq(variables['Build.SourceBranch'], 'refs/heads/master')
+  jobs:
+  - job: Linux
+    pool:
+      vmImage: 'ubuntu-16.04'
+    steps:
+    - task: Docker@2
+      displayName: Build and Push aloysbaillet/aswf-vfx2018
+      inputs:
+        command: buildAndPush
+        containerRegistry: dockerHubConnection
+        repository: aloysbaillet/aswf-vfx2018
+        Dockerfile: docker/aswf-vfx2018/Dockerfile
+        tags: |
+          latest
+          2018
+          2018.0
+    - task: Docker@2
+      displayName: Build and Push aloysbaillet/aswf-vfx2018-conan
+      inputs:
+        command: buildAndPush
+        containerRegistry: dockerHubConnection
+        repository: aloysbaillet/aswf-vfx2018-conan
+        Dockerfile: docker/aswf-vfx2018-conan/Dockerfile
+        tags: |
+          latest
+          2018
+          2018.0
 
-jobs:
-- job: Linux
-  pool:
-    vmImage: 'ubuntu-16.04'
-  steps:
-  - task: Docker@2
-    displayName: Build and Push aloysbaillet/aswf-vfx2018
-    inputs:
-      command: buildAndPush
-      containerRegistry: dockerHubConnection
-      repository: aloysbaillet/aswf-vfx2018
-      Dockerfile: docker/aswf-vfx2018/Dockerfile
-      tags: |
-        latest
-        2018
-        2018.0
-  - task: Docker@2
-    displayName: Build and Push aloysbaillet/aswf-vfx2018-conan
-    inputs:
-      command: buildAndPush
-      containerRegistry: dockerHubConnection
-      repository: aloysbaillet/aswf-vfx2018-conan
-      Dockerfile: docker/aswf-vfx2018-conan/Dockerfile
-      tags: |
-        latest
-        2018
-        2018.0
+- stage: build_conan_packages
+  displayName: Build and Publish Conan Packages
+  condition: always()
+  jobs:
+  - template: .azure/build-conan-package.yml
+    parameters:
+      package: TBB
+  - template: .azure/build-conan-package.yml
+    parameters:
+      package: boost
+  - template: .azure/build-conan-package.yml
+    parameters:
+      package: numpy
+  - template: .azure/build-conan-package.yml
+    parameters:
+      package: IlmBase
+  - template: .azure/build-conan-package.yml
+    parameters:
+      package: OpenEXR
+      inputPackages:
+        - IlmBase
+  - template: .azure/build-conan-package.yml
+    parameters:
+      package: PyIlmBase
+      inputPackages:
+        - IlmBase
+        - OpenEXR
+        - boost
+        - numpy
+  - template: .azure/build-conan-package.yml
+    parameters:
+      package: Qt
+  - template: .azure/build-conan-package.yml
+    parameters:
+      package: PySide
+      inputPackages:
+        - Qt
+  - template: .azure/build-conan-package.yml
+    parameters:
+      package: OpenColorIO
