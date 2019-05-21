@@ -1,5 +1,5 @@
 # Docker and Conan experiments for the ASWF
-Build and Deploy status on CircleCI: [![CircleCI](https://circleci.com/gh/aloysbaillet/aswf-ci-experiment.svg?style=svg)](https://circleci.com/gh/aloysbaillet/aswf-ci-experiment)
+Build and Deploy status on Azure: [![Build Status](https://aloysbaillet.visualstudio.com/ASWF/_apis/build/status/aloysbaillet.aswf-ci-experiment?branchName=master)](https://aloysbaillet.visualstudio.com/ASWF/_build/latest?definitionId=3&branchName=master)
 
 ## Docker images
 
