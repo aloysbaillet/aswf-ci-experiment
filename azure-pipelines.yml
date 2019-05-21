@@ -13,7 +13,10 @@ jobs:
       containerRegistry: dockerHubConnection
       repository: aloysbaillet/aswf-vfx2018
       Dockerfile: docker/aswf-vfx2018/Dockerfile
-      tags: aloysbaillet/aswf-vfx2018:latest
+      tags: |
+        latest
+        2018
+        2018.0
   - task: Docker@2
     displayName: Build and Push aloysbaillet/aswf-vfx2018-conan
     inputs:
@@ -21,4 +24,7 @@ jobs:
       containerRegistry: dockerHubConnection
       repository: aloysbaillet/aswf-vfx2018-conan
       Dockerfile: docker/aswf-vfx2018-conan/Dockerfile
-      tags: aloysbaillet/aswf-vfx2018-conan:latest
+      tags: |
+        latest
+        2018
+        2018.0
