@@ -3,7 +3,8 @@ stages:
   displayName: Build and Publish docker images  
   condition: eq(variables['Build.SourceBranch'], 'refs/heads/master')
   jobs:
-  - job: Linux
+  - job: build_docker_images
+    displayName: Build Docker Images
     pool:
       vmImage: 'ubuntu-16.04'
     steps:
@@ -71,3 +72,30 @@ stages:
   - template: .azure/build-conan-package.yml
     parameters:
       package: OpenColorIO
+
+- stage: upload_conan_packages
+  displayName: Upload Conan Packages
+  condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
+  jobs:
+  - job: upload_conan_packages
+    displayName: Upload Conan Packages
+    pool:
+      vmImage: 'ubuntu-16.04'
+    container: aloysbaillet/aswf-vfx2018-conan:latest
+    steps:
+    - template: .azure/download-conan-artifact.yml
+      parameters:
+        packages:
+        - TBB
+        - boost
+        - numpy
+        - IlmBase
+        - OpenEXR
+        - Qt
+        - PySide
+        - OpenColorIO
+    - bash: |
+        conan user -p $BINTRAY_API_KEY -r aswftest aloysbaillet
+        conan upload "*" -r aswftest --all --force --confirm
+      env:
+        BINTRAY_API_KEY: $(conan.apiKey)
