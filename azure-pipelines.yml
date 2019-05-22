@@ -62,6 +62,7 @@ stages:
   - template: .azure/build-conan-package.yml
     parameters:
       package: Qt
+      timeoutInMinutes: 120
   - template: .azure/build-conan-package.yml
     parameters:
       package: PySide
