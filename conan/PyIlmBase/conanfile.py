@@ -9,7 +9,7 @@ class PyIlmBaseConan(ConanFile):
     version = "2.2.0"
     license = "BSD"
     url = "https://github.com/jgsogo/conan-openexr.git"
-    settings = "os", "compiler", "build_type", "arch", "cppstd", "python"
+    settings = "os", "compiler", "build_type", "arch", "python"
     generators = "pkg_config", "virtualenv"
     exports = "*.tar.gz"
 

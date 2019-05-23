@@ -1,0 +1,14 @@
+[settings]
+arch=x86_64
+arch_build=x86_64
+build_type=Release
+compiler=Visual Studio
+compiler.runtime=MD
+compiler.version=15
+os=Windows
+os_build=Windows
+cppstd=14
+python=2.7
+[options]
+[build_requires]
+[env]

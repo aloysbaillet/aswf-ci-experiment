@@ -48,7 +48,7 @@ class QtConan(ConanFile):
     license = "http://doc.qt.io/qt-5/lgpl.html"
     author = "Bincrafters <bincrafters@gmail.com>"
     exports = "LICENSE.md", "qtmodules.conf", "*.zip", "*.patch"
-    settings = "os", "compiler", "build_type", "arch", "cppstd"
+    settings = "os", "compiler", "build_type", "arch"
 
     options = dict({
         "shared": [True, False],

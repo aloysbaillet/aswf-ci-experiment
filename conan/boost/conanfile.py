@@ -19,7 +19,7 @@ lib_list = ['math', 'wave', 'container', 'contract', 'exception', 'graph', 'iost
 class BoostConan(ConanFile):
     name = "boost"
     version = "1.61.0"
-    settings = "os", "arch", "compiler", "build_type", "cppstd", "python"
+    settings = "os", "arch", "compiler", "build_type", "python"
     folder_name = "boost_%s" % version.replace(".", "_")
     description = "Boost provides free peer-reviewed portable C++ source libraries"
     # The current python option requires the package to be built locally, to find default Python

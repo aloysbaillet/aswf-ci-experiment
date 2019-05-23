@@ -10,7 +10,7 @@ class IlmBaseConan(ConanFile):
     version = "2.2.0"
     license = "BSD"
     url = "https://github.com/Mikayex/conan-ilmbase.git"
-    settings = "os", "compiler", "build_type", "arch", "cppstd"
+    settings = "os", "compiler", "build_type", "arch"
     generators = "cmake"
     exports = "FindIlmBase.cmake", "*.tar.gz"
 

@@ -73,3 +73,7 @@ RUN curl "https://bootstrap.pypa.io/get-pip.py" -o "get-pip.py" &&\
 
 RUN pip install \
     nose
+
+RUN wget https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-3.3.0.1492-linux.zip -O /tmp/sonar.zip && \
+    sudo unzip /tmp/sonar.zip -d /usr/bin && \
+    rm /tmp/sonar.zip

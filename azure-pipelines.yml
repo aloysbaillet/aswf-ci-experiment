@@ -31,28 +31,42 @@ stages:
           2018
           2018.0
 
-- stage: build_conan_packages
-  displayName: Build and Publish Conan Packages
+- stage: build_windows_conan_packages
+  displayName: Build Windows Conan Packages
   condition: always()
   jobs:
-  - template: .azure/build-conan-package.yml
+  - template: .azure/build-windows-conan-package.yml
     parameters:
       package: TBB
-  - template: .azure/build-conan-package.yml
+  - template: .azure/build-windows-conan-package.yml
     parameters:
       package: boost
-  - template: .azure/build-conan-package.yml
-    parameters:
-      package: numpy
-  - template: .azure/build-conan-package.yml
+  - template: .azure/build-windows-conan-package.yml
     parameters:
       package: IlmBase
-  - template: .azure/build-conan-package.yml
+
+- stage: build_linux_conan_packages
+  displayName: Build Linux Conan Packages
+  condition: always()
+  jobs:
+  - template: .azure/build-linux-conan-package.yml
+    parameters:
+      package: TBB
+  - template: .azure/build-linux-conan-package.yml
+    parameters:
+      package: boost
+  - template: .azure/build-linux-conan-package.yml
+    parameters:
+      package: numpy
+  - template: .azure/build-linux-conan-package.yml
+    parameters:
+      package: IlmBase
+  - template: .azure/build-linux-conan-package.yml
     parameters:
       package: OpenEXR
       inputPackages:
         - IlmBase
-  - template: .azure/build-conan-package.yml
+  - template: .azure/build-linux-conan-package.yml
     parameters:
       package: PyIlmBase
       inputPackages:
@@ -60,17 +74,17 @@ stages:
         - OpenEXR
         - boost
         - numpy
-  - template: .azure/build-conan-package.yml
+  - template: .azure/build-linux-conan-package.yml
     parameters:
       package: Qt
       timeoutInMinutes: 180
-  - template: .azure/build-conan-package.yml
+  - template: .azure/build-linux-conan-package.yml
     parameters:
       package: PySide
       timeoutInMinutes: 120
       inputPackages:
         - Qt
-  - template: .azure/build-conan-package.yml
+  - template: .azure/build-linux-conan-package.yml
     parameters:
       package: OpenColorIO
 
@@ -84,7 +98,7 @@ stages:
       vmImage: 'ubuntu-16.04'
     container: aloysbaillet/aswf-vfx2018-conan:latest
     steps:
-    - template: .azure/download-conan-artifact.yml
+    - template: .azure/download-linux-conan-artifact.yml
       parameters:
         packages:
         - TBB

@@ -18,7 +18,7 @@ programs that take full advantage of multicore performance, that are portable an
 that have future-proof scalability"""
     author = "Conan Community"
     topics = ("conan", "tbb", "threading", "parallelism", "tbbmalloc")
-    settings = "os", "compiler", "build_type", "arch", "cppstd"
+    settings = "os", "compiler", "build_type", "arch"
     options = {"shared": [True, False],
                "preview": [True, False]}
     default_options = {"shared": True, "preview": True}
