@@ -195,13 +195,13 @@ class BoostConan(ConanFile):
             if getattr(self.options, "without_%s" % libname):
                 flags.append("--without-%s" % libname)
 
-        if self.settings.cppstd:
+        if self.settings.compiler.cppstd:
             toolset, _, _ = self.get_toolset_version_and_exe()
             flags.append("toolset=%s" % toolset)
             flags.append("cxxflags=%s" % cppstd_flag(
                     self.settings.get_safe("compiler"),
                     self.settings.get_safe("compiler.version"),
-                    self.settings.get_safe("cppstd")
+                    self.settings.get_safe("compiler.cppstd")
                 )
             )
 
@@ -345,7 +345,7 @@ class BoostConan(ConanFile):
     def _get_boostrap_toolset(self):
         if self.settings.os == "Windows" and self.settings.compiler == "Visual Studio":
             comp_ver = self.settings.compiler.version
-            return "vc%s" % ("141" if comp_ver == "15" else comp_ver)
+            return "vc%s" % ("14" if comp_ver == "15" else comp_ver)
 
         with_toolset = {"apple-clang": "darwin"}.get(str(self.settings.compiler),
                                                      str(self.settings.compiler))
@@ -433,8 +433,8 @@ class BoostConan(ConanFile):
 
         if self.options.without_test:  # remove boost_unit_test_framework
             self.cpp_info.libs = [lib for lib in self.cpp_info.libs if "unit_test" not in lib]
-        if not self.options.without_python:
-            self.cpp_info.libs.append("python%s"%self.settings.python)
+        # if not self.options.without_python:
+        #     self.cpp_info.libs.append("python%s"%self.settings.python)
         
         self.output.info("LIBRARIES: %s" % self.cpp_info.libs)
         self.output.info("Package folder: %s" % self.package_folder)

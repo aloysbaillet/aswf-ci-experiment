@@ -1,47 +1,52 @@
-
-import os, glob
-
-from conans import ConanFile, tools, AutoToolsBuildEnvironment
+import os
+from conans import ConanFile, CMake, tools
 
 
 class IlmBaseConan(ConanFile):
     name = "IlmBase"
     description = "IlmBase is a component of OpenEXR. OpenEXR is a high dynamic-range (HDR) image file format developed by Industrial Light & Magic for use in computer imaging applications."
-    version = "2.2.0"
+    version = "2.2.1"
     license = "BSD"
-    url = "https://github.com/Mikayex/conan-ilmbase.git"
+    url = "https://github.com/openexr/openexr"
     settings = "os", "compiler", "build_type", "arch"
-    generators = "cmake"
+    generators = "cmake_find_package"
     exports = "FindIlmBase.cmake", "*.tar.gz"
 
+    def requirements(self):
+        if self.settings.os == "Windows":
+            # On linux we rely on the system zlib library
+            self.requires('zlib/1.2.11@conan/stable')
+
     def source(self):
-        base = "ilmbase-{version}.tar.gz".format(version=self.version)
+        base = "openexr-{version}.tar.gz".format(version=self.version)
         if os.path.exists(base):
             self.output.info("Found local source tarball {}".format(base))
             tools.unzip(base)
         else:
-            url = "http://download.savannah.nongnu.org/releases/openexr/" + base
+            url = "https://github.com/openexr/openexr/archive/v{version}/".format(version=self.version) + base
             self.output.warn("Downloading source tarball {}".format(url))
             tools.get(url)
 
-    def build(self):
-        args = ["--enable-shared",
-                "--enable-namespaceversioning",
-        ]
+    def configure_cmake(self):
+        cmake = CMake(self)
+        cmake.definitions["OPENEXR_BUILD_ILMBASE"] = "ON"
+        cmake.definitions["OPENEXR_BUILD_OPENEXR"] = "OFF"
+        cmake.definitions["OPENEXR_BUILD_PYTHON_LIBS"] = "OFF"
+        cmake.definitions["OPENEXR_BUILD_UTILS"] = "OFF"
+        cmake.definitions["OPENEXR_BUILD_VIEWERS"] = "OFF"
+        cmake.configure(source_folder="openexr-{version}/IlmBase".format(version=self.version))
+        return cmake
 
-        autotools = AutoToolsBuildEnvironment(self)
-        autotools.configure(configure_dir='ilmbase-{}'.format(self.version), args=args)
-        autotools.make()
-        tools.replace_prefix_in_pc_file("IlmBase.pc", "${package_root_path_ilmbase}")
+    def build(self):
+        cmake = self.configure_cmake()
+        cmake.build()
+        cmake.test()
 
     def package(self):
-        autotools = AutoToolsBuildEnvironment(self)
-        autotools.install()
-        self.copy("FindIlmBase.cmake", src=".", dst=".")
-        self.copy("license*", dst="licenses", src="ilmbase-%s" % self.version, ignore_case=True, keep_path=False)
-
-        for f in glob.glob(os.path.join(self.package_folder, 'lib', '*.la')):
-            os.remove(f)
+        self.copy("FindIlmBase.cmake", src="cmake", keep_path=False)
+        self.copy("LICENSE")
+        cmake = self.configure_cmake()
+        cmake.install()
 
     def package_info(self):
         self.cpp_info.includedirs = ['include', os.path.join('include', 'OpenEXR')]
@@ -49,6 +54,3 @@ class IlmBaseConan(ConanFile):
 
         if self.settings.os == "Windows":
             self.cpp_info.defines.append("OPENEXR_DLL")
-
-        if not self.settings.os == "Windows":
-            self.cpp_info.cppflags = ["-pthread"]

@@ -44,6 +44,22 @@ stages:
   - template: .azure/build-windows-conan-package.yml
     parameters:
       package: IlmBase
+  - template: .azure/build-windows-conan-package.yml
+    parameters:
+      package: OpenEXR
+      inputPackages:
+        - IlmBase
+  - template: .azure/build-windows-conan-package.yml
+    parameters:
+      package: numpy
+  - template: .azure/build-windows-conan-package.yml
+    parameters:
+      package: PyIlmBase
+      inputPackages:
+        - IlmBase
+        - OpenEXR
+        - boost
+        - numpy
 
 - stage: build_linux_conan_packages
   displayName: Build Linux Conan Packages
