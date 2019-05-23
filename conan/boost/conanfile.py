@@ -315,7 +315,7 @@ class BoostConan(ConanFile):
         compiler = str(self.settings.compiler)
         if self.settings.compiler == "Visual Studio":
             cversion = self.settings.compiler.version
-            _msvc_version = "14.1" if cversion == "15" else "%s.0" % cversion
+            _msvc_version = "14" if cversion == "15" else "%s.0" % cversion
             return "msvc", _msvc_version, ""
         elif compiler == "gcc" and compiler_version[0] >= "5":
             # For GCC >= v5 we only need the major otherwise Boost doesn't find the compiler
