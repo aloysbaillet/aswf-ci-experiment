@@ -7,9 +7,9 @@ arch_build=x86_64
 compiler=gcc
 compiler.version=6.3
 compiler.libcxx=libstdc++
+compiler.cppstd=14
 build_type=Release
 python=2.7
-cppstd=14
 [options]
 [build_requires]
 [env]

@@ -22,7 +22,10 @@ class NumpyConan(ConanFile):
             tools.get(url)
 
     def build(self):
-        pypath = os.path.join(self.package_folder, 'lib64/python2.7/site-packages')
+        if self.settings.os == "Windows":
+            pypath = os.path.join(self.package_folder, 'Lib/site-packages')
+        else:
+            pypath = os.path.join(self.package_folder, 'lib64/python2.7/site-packages')
         os.makedirs(pypath)
         with tools.environment_append({'PYTHONPATH': pypath}):
             self.run('python setup.py build -j 4 install --prefix {}'.format(self.package_folder),
@@ -32,4 +35,7 @@ class NumpyConan(ConanFile):
         self.copy("*.egg")
 
     def package_info(self):
-        self.env_info.PYTHONPATH.append(os.path.join(self.package_folder, 'lib64/python2.7/site-packages'))
+        if self.settings.os == "Windows":
+            self.env_info.PYTHONPATH.append(os.path.join(self.package_folder, 'Lib/site-packages'))
+        else:
+            self.env_info.PYTHONPATH.append(os.path.join(self.package_folder, 'lib64/python2.7/site-packages'))

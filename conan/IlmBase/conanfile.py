@@ -45,13 +45,18 @@ class IlmBaseConan(ConanFile):
 
     def package(self):
         self.copy("FindIlmBase.cmake")
-        self.copy("LICENSE")
         cmake = self.configure_cmake()
         cmake.install()
 
     def package_info(self):
-        self.cpp_info.includedirs = ['include', os.path.join('include', 'OpenEXR')]
-        self.cpp_info.libs = ['Half', 'Iex', 'IexMath', 'IlmThread', 'Imath']
+        parsed_version = self.version.split('.')
+        version_suffix = "-%s_%s" % (parsed_version[0], parsed_version[1])
 
         if self.settings.os == "Windows":
             self.cpp_info.defines.append("OPENEXR_DLL")
+        else:
+            self.cpp_info.cppflags = ["-pthread"]
+
+        self.cpp_info.includedirs = ['include', 'include/OpenEXR']
+        self.cpp_info.libs = ["Imath" + version_suffix, "IexMath" + version_suffix, "Half", "Iex" + version_suffix,
+                              "IlmThread" + version_suffix]
