@@ -1,5 +1,5 @@
 import os
-from conans import ConanFile, CMake, tools
+from conans import ConanFile, CMake, tools, RunEnvironment
 
 
 class IlmBaseConan(ConanFile):
@@ -9,7 +9,7 @@ class IlmBaseConan(ConanFile):
     license = "BSD"
     url = "https://github.com/openexr/openexr"
     settings = "os", "compiler", "build_type", "arch"
-    generators = "cmake_find_package"
+    generators = "cmake_paths"
     exports = "FindIlmBase.cmake", "*.tar.gz"
 
     def requirements(self):
@@ -29,21 +29,22 @@ class IlmBaseConan(ConanFile):
 
     def configure_cmake(self):
         cmake = CMake(self)
+        cmake.definitions['CMAKE_TOOLCHAIN_FILE'] = 'conan_paths.cmake'
         cmake.definitions["OPENEXR_BUILD_ILMBASE"] = "ON"
         cmake.definitions["OPENEXR_BUILD_OPENEXR"] = "OFF"
         cmake.definitions["OPENEXR_BUILD_PYTHON_LIBS"] = "OFF"
         cmake.definitions["OPENEXR_BUILD_UTILS"] = "OFF"
         cmake.definitions["OPENEXR_BUILD_VIEWERS"] = "OFF"
+        cmake.definitions["OPENEXR_BUILD_TESTS"] = "OFF"
         cmake.configure(source_folder="openexr-{version}/IlmBase".format(version=self.version))
         return cmake
 
     def build(self):
         cmake = self.configure_cmake()
         cmake.build()
-        cmake.test()
 
     def package(self):
-        self.copy("FindIlmBase.cmake", src="cmake", keep_path=False)
+        self.copy("FindIlmBase.cmake")
         self.copy("LICENSE")
         cmake = self.configure_cmake()
         cmake.install()
